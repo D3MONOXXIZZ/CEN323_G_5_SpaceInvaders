@@ -586,3 +586,55 @@ CheckCollisions_EnemyLoop:
     mov al, byte ptr [EnemyY+si]
     cmp al, dh
     jne CheckCollisions_NextEnemy
+                                           
+ ; --- COLLISION DETECTED ---
+    ; Visually erase the enemy immediately to prevent ghosting
+    push ax
+    push bx
+    push dx
+    mov al, ' '
+    mov bl, 07h
+    mov dh, byte ptr [EnemyY+si]
+    mov dl, byte ptr [EnemyX+si]
+    call PutCharAt
+    inc dl
+    call PutCharAt
+    inc dl
+    call PutCharAt
+    pop dx
+    pop bx
+    pop ax
+   
+   ; Update game state
+    mov byte ptr [EnemyAlive+si], 0   ; Kill enemy
+    mov byte ptr [BulletActive+di], 0 ; Kill bullet
+    mov ax, Score
+    add ax, 10                        ; Add 10 points
+    mov Score, ax
+    jmp CheckCollisions_BreakEnemy    ; Bullet is gone, break inner loop   
+    
+    CheckCollisions_NextEnemy:
+    inc si
+    dec bx
+    jnz CheckCollisions_EnemyLoop
+CheckCollisions_BreakEnemy:
+
+CheckCollisions_NextBullet:
+    inc di
+    loop CheckCollisions_BulletLoop
+
+    pop di
+    pop si
+    pop dx
+    pop cx
+    pop bx
+    pop ax
+    ret
+CheckCollisions endp
+
+CheckWinLose proc near
+    push ax
+    push cx
+    push si
+
+                                     
