@@ -543,4 +543,46 @@ MoveEnemiesHoriz_Next:
     pop cx
     pop ax
     ret
-MoveEnemiesHoriz endp
+MoveEnemiesHoriz endp            
+
+;; ==========================================
+;; COLLISION & GAME STATE LOGIC
+;; ==========================================
+CheckCollisions proc near
+    ; Nested loop: Checks every active bullet against every active enemy
+    push ax
+    push bx
+    push cx
+    push dx
+    push si
+    push di
+
+    mov di, 0
+    mov cx, BulletCount
+CheckCollisions_BulletLoop:
+    cmp byte ptr [BulletActive+di], 0
+    je CheckCollisions_NextBullet
+
+    mov dl, byte ptr [BulletX+di]
+    mov dh, byte ptr [BulletY+di]
+
+    mov si, 0
+    mov bx, EnemyCount
+CheckCollisions_EnemyLoop:
+    cmp byte ptr [EnemyAlive+si], 0
+    je CheckCollisions_NextEnemy
+    
+    ; Is Bullet X >= Enemy X ?
+    mov al, byte ptr [EnemyX+si]
+    cmp dl, al
+    jb CheckCollisions_NextEnemy
+    
+    ; Is Bullet X <= Enemy X + Sprite Width ?
+    add al, (EnemySpriteW-1)
+    cmp dl, al
+    ja CheckCollisions_NextEnemy
+    
+    ; Is Bullet Y == Enemy Y ?
+    mov al, byte ptr [EnemyY+si]
+    cmp al, dh
+    jne CheckCollisions_NextEnemy
