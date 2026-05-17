@@ -829,3 +829,60 @@ DrawPlayer proc near
     pop ax
     ret
 DrawPlayer endp
+
+DrawBullets proc near
+    push ax
+    push bx
+    push cx
+    push dx
+    push di
+
+    mov cx, BulletCount
+    mov di, 0
+DrawBullets_Loop:
+    cmp byte ptr [BulletActive+di], 0
+    je DrawBullets_Next
+    mov al, '|'         ; Bullet character
+    mov bl, 0Fh         ; Bright White color
+    mov dh, byte ptr [BulletY+di]
+    mov dl, byte ptr [BulletX+di]
+    call PutCharAt
+DrawBullets_Next:
+    inc di
+    loop DrawBullets_Loop
+
+    pop di
+    pop dx
+    pop cx
+    pop bx
+    pop ax
+    ret
+DrawBullets endp
+
+DrawEnemies proc near
+    push ax
+    push bx
+    push cx
+    push dx
+    push si
+
+    mov cx, EnemyCount
+    mov si, 0
+DrawEnemies_Loop:
+    cmp byte ptr [EnemyAlive+si], 0
+    je DrawEnemies_Next
+    mov bl, 0Ch         ; Light Red color
+    mov dh, byte ptr [EnemyY+si]
+    mov dl, byte ptr [EnemyX+si]
+    call DrawEnemySpriteAt
+DrawEnemies_Next:
+    inc si
+    loop DrawEnemies_Loop
+
+    pop si
+    pop dx
+    pop cx
+    pop bx
+    pop ax
+    ret
+DrawEnemies endp
