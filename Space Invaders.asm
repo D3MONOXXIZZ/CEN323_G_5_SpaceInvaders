@@ -1005,4 +1005,45 @@ PrintZAt_Done:
     pop bx
     pop ax
     ret
-PrintZAt endp
+PrintZAt endp                                        
+
+PrintNum6At proc near
+    ; Converts 16-bit integer in AX to a 6-digit string and prints it
+    push ax
+    push bx
+    push cx
+    push dx
+    push si
+    call SetCursor
+
+    mov bx, 10          ; Base 10 division
+    mov cx, 6           ; 6 digits to extract
+    lea si, NumBuf      ; Pointer to temporary buffer
+    add si, 5           ; Start at the END of the buffer (least significant digit)
+PrintNum6_Store:
+    xor dx, dx
+    div bx              ; Divide AX by 10. Quotient in AX, Remainder in DX
+    add dl, '0'         ; Convert remainder to ASCII char
+    mov [si], dl        ; Store char in buffer
+    dec si              ; Move backwards in buffer
+    loop PrintNum6_Store
+
+    lea si, NumBuf      ; Point back to start of buffer
+    mov cx, 6
+PrintNum6_Print:
+    lodsb               ; Teletype print the whole buffer
+    mov ah, 0Eh
+    mov bx, 0007h
+    int 10h
+    loop PrintNum6_Print
+
+    pop si
+    pop dx
+    pop cx
+    pop bx
+    pop ax
+    ret
+PrintNum6At endp
+
+NumBuf db '000000'      ; Temporary buffer for score string conversion
+
