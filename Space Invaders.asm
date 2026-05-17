@@ -637,4 +637,35 @@ CheckWinLose proc near
     push cx
     push si
 
-                                     
+; 1. Check Lose Condition (Enemies reached player height)
+    mov al, PlayerY
+    mov cx, EnemyCount
+    mov si, 0
+CheckWinLose_EnemyLoop:
+    cmp byte ptr [EnemyAlive+si], 0
+    je CheckWinLose_NextEnemy
+    mov ah, byte ptr [EnemyY+si]
+    cmp ah, al
+    jb CheckWinLose_NextEnemy   ; If enemy Y < player Y, we're safe
+    mov GameState, 2            ; Game Over
+    jmp CheckWinLose_Done
+CheckWinLose_NextEnemy:
+    inc si
+    loop CheckWinLose_EnemyLoop
+
+    ; 2. Check Win Condition (Are all enemies dead?)
+    mov cx, EnemyCount
+    mov si, 0
+CheckWinLose_AliveLoop:
+    cmp byte ptr [EnemyAlive+si], 0
+    jne CheckWinLose_Done       ; Found an alive enemy, not winning yet
+    inc si
+    loop CheckWinLose_AliveLoop
+    mov GameState, 1            ; You Win
+
+CheckWinLose_Done:
+    pop si
+    pop cx
+    pop ax
+    ret
+CheckWinLose endp                                     
