@@ -27,18 +27,4 @@ This repository contains a simplified **Space Invaders** clone written in **8086
 - Restart: `R`
 - Quit: `ESC`
 
-## Build the Report (LaTeX)
-
-- Overleaf: upload the `overleaf/` folder and set `main.tex` as the root file.
-- Local LaTeX:
-
-```bash
-pdflatex main.tex
-```
-
-If your LaTeX setup includes `latexmk`, you can also use:
-
-```bash
-latexmk -pdf main.tex
-```
 
