@@ -727,4 +727,47 @@ ErasePrevEntities proc near
     push si
 
     mov al, ' '         ; Space character
-    mov bl, 07h         ; Light grey text attributes
+    mov bl, 07h         ; Light grey text attributes                
+    
+    
+    ; Erase Old Bullets
+    mov cx, BulletCount
+    mov si, 0
+ErasePrevEntities_Bullets:
+    cmp byte ptr [PrevBulletActive+si], 0
+    je ErasePrevEntities_BulletNext
+    mov dh, byte ptr [PrevBulletY+si]
+    mov dl, byte ptr [PrevBulletX+si]
+    call PutCharAt
+ErasePrevEntities_BulletNext:
+    inc si
+    loop ErasePrevEntities_Bullets
+
+    ; Erase Old Enemies
+    mov cx, EnemyCount
+    mov si, 0
+ErasePrevEntities_Enemies:
+    cmp byte ptr [PrevEnemyAlive+si], 0
+    je ErasePrevEntities_EnemyNext
+    mov dh, byte ptr [PrevEnemyY+si]
+    mov dl, byte ptr [PrevEnemyX+si]
+    call PutCharAt      ; Char 1
+    inc dl
+    call PutCharAt      ; Char 2
+    inc dl
+    call PutCharAt      ; Char 3
+ErasePrevEntities_EnemyNext:
+    inc si
+    loop ErasePrevEntities_Enemies
+
+    ; Erase Old Player
+    mov dh, PlayerY
+    mov dl, PrevPlayerX
+    call PutCharAt
+
+    pop si
+    pop dx
+    pop cx
+    pop bx
+    pop ax
+    ret
