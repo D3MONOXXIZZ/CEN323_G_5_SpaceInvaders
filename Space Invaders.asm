@@ -932,3 +932,22 @@ ClearScreen proc near
     pop ax
     ret
 ClearScreen endp
+ClearPlayfield proc near
+    ; Same as clear screen but ignores Row 0 (HUD area)
+    push ax
+    push bx
+    push cx
+    push dx
+    mov ax, 0600h
+    mov bh, 07h
+    mov ch, 1           ; Start at row 1
+    mov cl, 0
+    mov dh, 24
+    mov dl, 79
+    int 10h
+    pop dx
+    pop cx
+    pop bx
+    pop ax
+    ret
+ClearPlayfield endp
