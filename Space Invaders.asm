@@ -1046,4 +1046,58 @@ PrintNum6_Print:
 PrintNum6At endp
 
 NumBuf db '000000'      ; Temporary buffer for score string conversion
+                                                                         
+                                                                         
+;; ==========================================
+;; END GAME SCREENS
+;; ==========================================
+ShowWinScreen proc near
+    call ClearScreen
+    mov dh, 10
+    mov dl, 36
+    lea si, MsgWin
+    call PrintZAt       ; Print "YOU WIN!" in center
+    mov dh, 12
+    mov dl, 28
+    lea si, MsgPrompt
+    call PrintZAt       ; Print "R=RESTART ESC=QUIT" below
+    call WaitRestartOrQuit
+    ret
+ShowWinScreen endp
 
+ShowGameOverScreen proc near
+    call ClearScreen
+    mov dh, 10
+    mov dl, 34
+    lea si, MsgGameOver
+    call PrintZAt       ; Print "GAME OVER" in center
+    mov dh, 12
+    mov dl, 28
+    lea si, MsgPrompt
+    call PrintZAt
+    call WaitRestartOrQuit
+    ret
+ShowGameOverScreen endp
+
+WaitRestartOrQuit proc near
+    ; Blocks and waits for ESC or R on the end screens
+    push ax
+WaitRestartOrQuit_Loop:
+    mov ah, 00h         ; Wait for keystroke
+    int 16h
+    cmp al, 1Bh         ; Check ESC
+    jne WaitRestartOrQuit_NotEsc
+    mov ExitFlag, 1     ; Flag program to exit
+    jmp WaitRestartOrQuit_Done
+WaitRestartOrQuit_NotEsc:
+    cmp al, 'r'         ; Check R
+    je WaitRestartOrQuit_Restart
+    cmp al, 'R'
+    je WaitRestartOrQuit_Restart
+    jmp WaitRestartOrQuit_Loop ; Keep blocking until valid key pressed
+WaitRestartOrQuit_Restart:
+    call ResetGame      ; Boot game logic back up
+WaitRestartOrQuit_Done:
+    pop ax
+    ret
+WaitRestartOrQuit endp                                                                         
