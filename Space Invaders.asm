@@ -951,3 +951,34 @@ ClearPlayfield proc near
     pop ax
     ret
 ClearPlayfield endp
+
+
+SetCursor proc near
+    ; Moves hardware cursor to DH (Row), DL (Col)
+    push ax
+    push bx
+    mov ah, 02h         ; BIOS Set Cursor Position
+    mov bh, 0           ; Page 0
+    int 10h
+    pop bx
+    pop ax
+    ret
+SetCursor endp
+
+PutCharAt proc near
+    ; Draws character AL in color BL at DH,DL
+    push ax
+    push bx
+    push cx
+    push dx
+    call SetCursor
+    mov ah, 09h         ; BIOS Write Character and Attribute
+    mov bh, 0
+    mov cx, 1           ; Write it 1 time
+    int 10h
+    pop dx
+    pop cx
+    pop bx
+    pop ax
+    ret
+PutCharAt endp
