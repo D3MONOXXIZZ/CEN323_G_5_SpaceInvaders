@@ -885,4 +885,31 @@ DrawEnemies_Next:
     pop bx
     pop ax
     ret
-DrawEnemies endp
+DrawEnemies endp                
+
+DrawEnemySpriteAt proc near
+    ; Draws a 3-character enemy sprite based on animation frame
+    push ax
+    push si
+
+    mov al, EnemyAnim
+    cmp al, 0
+    jne DrawEnemySpriteAt_Frame1
+    lea si, EnemySprite0    ; Load address of frame 0 ('/X\')
+    jmp DrawEnemySpriteAt_Draw
+DrawEnemySpriteAt_Frame1:
+    lea si, EnemySprite1    ; Load address of frame 1 ('\X/')
+DrawEnemySpriteAt_Draw:
+    lodsb               ; Load char from [SI] to AL, increment SI
+    call PutCharAt
+    inc dl
+    lodsb
+    call PutCharAt
+    inc dl
+    lodsb
+    call PutCharAt
+
+    pop si
+    pop ax
+    ret
+DrawEnemySpriteAt endp
