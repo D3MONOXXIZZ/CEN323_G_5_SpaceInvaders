@@ -771,3 +771,61 @@ ErasePrevEntities_EnemyNext:
     pop bx
     pop ax
     ret
+ErasePrevEntities endp
+
+SyncPrevState proc near
+    ; Copies current coordinates to the Prev coordinates array
+    ; Called at the end of the frame
+    push ax
+    push cx
+    push si
+
+    mov al, PlayerX
+    mov PrevPlayerX, al
+
+    mov cx, BulletCount
+    mov si, 0
+SyncPrevState_Bullets:
+    mov al, byte ptr [BulletActive+si]
+    mov byte ptr [PrevBulletActive+si], al
+    mov al, byte ptr [BulletX+si]
+    mov byte ptr [PrevBulletX+si], al
+    mov al, byte ptr [BulletY+si]
+    mov byte ptr [PrevBulletY+si], al
+    inc si
+    loop SyncPrevState_Bullets
+
+    mov cx, EnemyCount
+    mov si, 0
+SyncPrevState_Enemies:
+    mov al, byte ptr [EnemyAlive+si]
+    mov byte ptr [PrevEnemyAlive+si], al
+    mov al, byte ptr [EnemyX+si]
+    mov byte ptr [PrevEnemyX+si], al
+    mov al, byte ptr [EnemyY+si]
+    mov byte ptr [PrevEnemyY+si], al
+    inc si
+    loop SyncPrevState_Enemies
+
+    pop si
+    pop cx
+    pop ax
+    ret
+SyncPrevState endp
+
+DrawPlayer proc near
+    push ax
+    push bx
+    push dx
+
+    mov al, '^'         ; Player character
+    mov bl, 0Ah         ; Light Green color attribute
+    mov dh, PlayerY
+    mov dl, PlayerX
+    call PutCharAt
+
+    pop dx
+    pop bx
+    pop ax
+    ret
+DrawPlayer endp
