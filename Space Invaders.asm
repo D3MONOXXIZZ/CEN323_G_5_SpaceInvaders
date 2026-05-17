@@ -982,3 +982,27 @@ PutCharAt proc near
     pop ax
     ret
 PutCharAt endp
+
+
+PrintZAt proc near
+    ; Prints Null-terminated string at SI to DH,DL
+    push ax
+    push bx
+    push dx
+    push si
+    call SetCursor
+    mov bx, 0007h
+PrintZAt_Loop:
+    lodsb               ; Load char from [SI] to AL
+    cmp al, 0           ; Is it null terminator?
+    je PrintZAt_Done
+    mov ah, 0Eh         ; BIOS Teletype output
+    int 10h
+    jmp PrintZAt_Loop
+PrintZAt_Done:
+    pop si
+    pop dx
+    pop bx
+    pop ax
+    ret
+PrintZAt endp
