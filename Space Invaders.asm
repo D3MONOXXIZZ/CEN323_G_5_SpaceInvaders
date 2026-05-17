@@ -913,3 +913,22 @@ DrawEnemySpriteAt_Draw:
     pop ax
     ret
 DrawEnemySpriteAt endp
+;; ==========================================
+;; LOW-LEVEL VIDEO HELPERS
+;; ==========================================
+ClearScreen proc near
+    push ax
+    push bx
+    push cx
+    push dx
+    mov ax, 0600h       ; BIOS Scroll Window Up (AL=0 clears entirely)
+    mov bh, 07h         ; Fill with light grey on black
+    mov cx, 0000h       ; Top-Left corner (0,0)
+    mov dx, 184Fh       ; Bottom-Right corner (24,79)
+    int 10h
+    pop dx
+    pop cx
+    pop bx
+    pop ax
+    ret
+ClearScreen endp
