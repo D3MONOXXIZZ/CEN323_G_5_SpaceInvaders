@@ -20,6 +20,9 @@ This repository contains a simplified **Space Invaders** clone written in **8086
 1. Open `space_invaders_fixed.asm` in emu8086.
 2. Assemble/compile, then run the program.
 
+## NOTE
+Try running this in DOSBox for the best experiance :).
+
 ### Controls
 
 - Move: `A` / `D` or Left / Right arrow keys
