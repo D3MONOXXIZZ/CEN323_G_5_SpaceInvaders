@@ -668,4 +668,63 @@ CheckWinLose_Done:
     pop cx
     pop ax
     ret
-CheckWinLose endp                                     
+CheckWinLose endp
+;; ==========================================
+;; RENDERING FUNCTIONS
+;; ==========================================
+DrawHUD proc near
+    push ax
+    push dx
+    push si
+
+    ; Print 'SCORE:' at 0,0
+    mov dh, 0
+    mov dl, 0
+    lea si, HudScore
+    call PrintZAt
+
+    ; Print Score Number at 0,7
+    mov dh, 0
+    mov dl, 7
+    mov ax, Score
+    call PrintNum6At
+
+    ; Print Quit prompt at 0,55
+    mov dh, 0
+    mov dl, 55
+    lea si, HudQuit
+    call PrintZAt
+
+    pop si
+    pop dx
+    pop ax
+    ret
+DrawHUD endp
+
+DrawScoreIfChanged proc near
+    push ax
+    push dx
+    mov ax, Score
+    cmp ax, PrevScore
+    je DrawScoreIfChanged_Done
+    mov PrevScore, ax       ; Update cache
+    mov dh, 0
+    mov dl, 7
+    call PrintNum6At        ; Redraw number
+DrawScoreIfChanged_Done:
+    pop dx
+    pop ax
+    ret
+DrawScoreIfChanged endp
+
+ErasePrevEntities proc near
+    ; "Double Buffering" alternative: Overwrite previous positions 
+    ; with spaces before drawing the new frame. Prevents flickering.
+    push ax
+    push bx
+    push cx
+    push dx
+    push si
+
+    mov al, ' '         ; Space character
+    mov bl, 07h         ; Light grey text attributes
